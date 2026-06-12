@@ -1,552 +1,1030 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skyblock Guide — Money & XP</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    /* ── Tokens ── */
-    :root {
-      --bg:        #0d0f14;
-      --surface:   #13161e;
-      --surface2:  #1a1e2a;
-      --border:    #232838;
-      --gold:      #f0b429;
-      --gold-dim:  #7a5a12;
-      --emerald:   #22c55e;
-      --emerald-dim:#145c30;
-      --sky:       #38bdf8;
-      --red:       #f87171;
-      --text:      #e2e8f0;
-      --muted:     #6b7280;
-      --radius:    10px;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Skyblock Guide — Money & XP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ─── Reset & Tokens ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080a10;
+  --bg2:#0d1020;
+  --panel:#111525;
+  --panel2:#161b2e;
+  --rim:#1e2540;
+  --rim2:#252d4a;
+  --gold:#f5c842;
+  --gold2:#fde68a;
+  --goldglow:rgba(245,200,66,0.15);
+  --green:#4ade80;
+  --greenglow:rgba(74,222,128,0.12);
+  --red:#f87171;
+  --blue:#60a5fa;
+  --purple:#a78bfa;
+  --text:#e8eaf6;
+  --muted:#5a6280;
+  --muted2:#7b84a8;
+  --r:12px;
+  --sidebar:240px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+::selection{background:var(--goldglow);color:var(--gold2)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--rim2);border-radius:3px}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── Animated starfield canvas ─────────────────────────── */
+#starfield{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;opacity:0.5;
+}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 16px;
-      line-height: 1.65;
-    }
+/* ─── Sidebar ─────────────────────────────────────────────── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:var(--sidebar);
+  background:var(--bg2);
+  border-right:1px solid var(--rim);
+  z-index:50;
+  display:flex;flex-direction:column;
+  padding:0;
+  transition:transform 0.3s ease;
+}
+.sidebar-logo{
+  padding:1.75rem 1.5rem 1.25rem;
+  border-bottom:1px solid var(--rim);
+}
+.logo-badge{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--goldglow);
+  border:1px solid rgba(245,200,66,0.25);
+  border-radius:6px;
+  padding:0.3rem 0.7rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;
+  color:var(--gold);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  margin-bottom:0.75rem;
+}
+.logo-title{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:1.15rem;
+  line-height:1.2;
+  color:var(--text);
+}
+.logo-title span{color:var(--gold)}
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.nav-section-label{
+  padding:1.25rem 1.5rem 0.4rem;
+  font-size:0.65rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+}
+.nav-item{
+  display:flex;align-items:center;gap:0.65rem;
+  padding:0.55rem 1.5rem;
+  color:var(--muted2);
+  text-decoration:none;
+  font-size:0.875rem;
+  font-weight:500;
+  border-left:2px solid transparent;
+  transition:all 0.15s;
+  cursor:pointer;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.nav-item.active{color:var(--gold);border-left-color:var(--gold);background:var(--goldglow)}
+.nav-icon{font-size:0.9rem;width:1.1rem;text-align:center}
 
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(13,15,20,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem;
-      height: 56px;
-    }
-    .nav-logo {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--gold);
-      letter-spacing: -0.02em;
-    }
-    .nav-links { display: flex; gap: 2rem; }
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: color 0.15s;
-    }
-    .nav-links a:hover { color: var(--text); }
+.sidebar-footer{
+  margin-top:auto;
+  padding:1rem 1.5rem;
+  border-top:1px solid var(--rim);
+  font-size:0.72rem;
+  color:var(--muted);
+  line-height:1.5;
+}
 
-    /* ── Hero ── */
-    .hero {
-      padding: 5rem 2rem 4rem;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-    .hero-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--gold);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 1.25rem;
-    }
-    .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.25rem;
-    }
-    .hero h1 span { color: var(--gold); }
-    .hero p {
-      color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 560px;
-    }
+/* ─── Mobile toggle ──────────────────────────────────────── */
+.mob-toggle{
+  display:none;
+  position:fixed;top:1rem;left:1rem;z-index:200;
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:8px;
+  padding:0.5rem 0.7rem;
+  cursor:pointer;color:var(--text);font-size:1.1rem;
+}
 
-    /* ── Layout ── */
-    main {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 2rem 6rem;
-    }
+/* ─── Main content ───────────────────────────────────────── */
+.content{
+  margin-left:var(--sidebar);
+  position:relative;z-index:1;
+  min-height:100vh;
+}
 
-    /* ── Section header ── */
-    .section-header {
-      display: flex; align-items: center; gap: 1rem;
-      margin: 3.5rem 0 1.5rem;
-    }
-    .section-icon {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      display: grid; place-items: center;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-    }
-    .icon-gold  { background: rgba(240,180,41,0.12); }
-    .icon-green { background: rgba(34,197,94,0.12); }
-    .section-header h2 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+/* ─── Hero ───────────────────────────────────────────────── */
+.hero{
+  position:relative;
+  padding:5rem 4rem 4rem;
+  border-bottom:1px solid var(--rim);
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;
+  top:-80px;right:-80px;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(245,200,66,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:0.75rem;
+  margin-bottom:1.5rem;
+}
+.pill{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:0.25rem 0.75rem;
+  border-radius:100px;
+  font-weight:500;
+}
+.pill-gold{background:var(--goldglow);color:var(--gold);border:1px solid rgba(245,200,66,0.3)}
+.pill-green{background:var(--greenglow);color:var(--green);border:1px solid rgba(74,222,128,0.25)}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:clamp(2.5rem,5vw,4.5rem);
+  line-height:1.05;
+  letter-spacing:-0.03em;
+  max-width:700px;
+  margin-bottom:1.25rem;
+}
+.hero h1 .line2{
+  background:linear-gradient(90deg,var(--gold),var(--gold2),#fb923c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  color:var(--muted2);
+  font-size:1.05rem;
+  max-width:520px;
+  margin-bottom:2.5rem;
+}
+.hero-stats{
+  display:flex;gap:2.5rem;flex-wrap:wrap;
+}
+.hero-stat{}
+.hero-stat .val{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:2rem;
+  color:var(--gold);
+  line-height:1;
+  display:block;
+}
+.hero-stat .lbl{
+  font-size:0.75rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
 
-    /* ── Cards ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .card h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-    .card p { color: var(--muted); font-size: 0.9rem; }
+/* ─── Page sections ──────────────────────────────────────── */
+.page-section{
+  padding:3.5rem 4rem;
+  border-bottom:1px solid var(--rim);
+}
 
-    /* ── Progression Steps ── */
-    .steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 1rem; }
-    .step {
-      display: flex; gap: 1rem; align-items: flex-start;
-      position: relative;
-    }
-    .step:not(:last-child)::before {
-      content: '';
-      position: absolute;
-      left: 15px; top: 32px;
-      width: 2px; height: calc(100% + 0px);
-      background: var(--border);
-    }
-    .step-num {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      display: grid; place-items: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--gold);
-      flex-shrink: 0;
-      margin-top: 2px;
-      position: relative;
-      z-index: 1;
-    }
-    .step-body { padding-bottom: 1.5rem; }
-    .step-body strong { display: block; font-size: 0.95rem; margin-bottom: 0.25rem; }
-    .step-body span { color: var(--muted); font-size: 0.875rem; }
+.section-eyebrow{
+  display:flex;align-items:center;gap:0.75rem;
+  margin-bottom:0.75rem;
+}
+.section-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.1em;
+}
+.section-tag{font-size:0.75rem;color:var(--muted2)}
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:1.9rem;
+  letter-spacing:-0.025em;
+  margin-bottom:0.5rem;
+}
+.section-desc{color:var(--muted2);font-size:0.95rem;margin-bottom:2.5rem;max-width:600px}
 
-    /* ── Farm comparison table ── */
-    .compare {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .farm-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .farm-card.recommended { border-color: var(--gold-dim); }
-    .farm-card.recommended::before {
-      content: 'Recommended';
-      position: absolute; top: 0; right: 0;
-      background: var(--gold);
-      color: #000;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 10px;
-      border-bottom-left-radius: 6px;
-    }
-    .farm-name {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    .farm-stat { margin-bottom: 0.6rem; }
-    .farm-stat label {
-      display: block;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-    .farm-stat value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--emerald);
-    }
-    .farm-stat value.cost { color: var(--red); }
+/* ─── Progress path ──────────────────────────────────────── */
+.path-track{
+  position:relative;
+  display:flex;flex-direction:column;gap:0;
+}
+.path-track::before{
+  content:'';position:absolute;left:19px;top:20px;bottom:20px;width:2px;
+  background:linear-gradient(to bottom,var(--gold),var(--green),var(--purple));
+  opacity:0.3;
+}
+.path-step{
+  display:flex;gap:1.5rem;align-items:flex-start;
+  padding:1.25rem 1.5rem;
+  border-radius:var(--r);
+  transition:background 0.2s;
+  position:relative;
+}
+.path-step:hover{background:var(--panel)}
+.path-dot{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+  position:relative;z-index:1;
+  border:2px solid var(--rim2);
+  background:var(--bg2);
+}
+.path-body{}
+.path-title{font-weight:600;font-size:1rem;margin-bottom:0.3rem}
+.path-desc{color:var(--muted2);font-size:0.875rem;line-height:1.6}
+.path-badge{
+  display:inline-block;
+  margin-top:0.5rem;
+  font-size:0.7rem;
+  padding:0.15rem 0.6rem;
+  border-radius:4px;
+  font-family:'JetBrains Mono',monospace;
+}
+.badge-warn{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+.badge-tip{background:var(--goldglow);color:var(--gold);border:1px solid rgba(245,200,66,0.2)}
+.badge-ok{background:var(--greenglow);color:var(--green);border:1px solid rgba(74,222,128,0.2)}
 
-    /* ── Warning / tip boxes ── */
-    .callout {
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-      display: flex; gap: 0.75rem;
-      font-size: 0.9rem;
-    }
-    .callout-warn {
-      background: rgba(248,113,113,0.07);
-      border: 1px solid rgba(248,113,113,0.2);
-      color: #fca5a5;
-    }
-    .callout-tip {
-      background: rgba(240,180,41,0.07);
-      border: 1px solid rgba(240,180,41,0.2);
-      color: #fcd34d;
-    }
-    .callout-info {
-      background: rgba(56,189,248,0.07);
-      border: 1px solid rgba(56,189,248,0.2);
-      color: #7dd3fc;
-    }
-    .callout-icon { flex-shrink: 0; font-size: 1.1rem; }
+/* ─── Farm comparison ────────────────────────────────────── */
+.farm-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.25rem;
+  margin-bottom:1.5rem;
+}
+.farm-card{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:transform 0.2s,border-color 0.2s;
+}
+.farm-card:hover{transform:translateY(-2px)}
+.farm-card.star{border-color:rgba(245,200,66,0.35)}
+.farm-header{
+  padding:1.25rem 1.5rem;
+  border-bottom:1px solid var(--rim);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.farm-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem}
+.best-tag{
+  font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--gold);color:#000;font-weight:700;
+  padding:0.2rem 0.6rem;border-radius:4px;
+}
+.farm-body{padding:1.25rem 1.5rem}
+.farm-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:0.5rem 0;
+  border-bottom:1px solid var(--rim);
+}
+.farm-row:last-child{border-bottom:none}
+.farm-row-label{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.farm-row-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.95rem;font-weight:500;
+}
+.val-gold{color:var(--gold)}
+.val-red{color:var(--red)}
+.val-green{color:var(--green)}
+.val-blue{color:var(--blue)}
 
-    /* ── Bad list ── */
-    .bad-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .bad-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.85rem;
-      color: var(--red);
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .bad-item::before { content: '✕'; font-size: 0.75rem; }
+/* ─── Verdict bar ────────────────────────────────────────── */
+.verdict{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-left:3px solid var(--gold);
+  border-radius:var(--r);
+  padding:1.25rem 1.5rem;
+  display:grid;grid-template-columns:auto 1fr;gap:1rem;
+  align-items:start;
+  margin-bottom:1.5rem;
+}
+.verdict-icon{font-size:1.4rem;margin-top:2px}
+.verdict-head{font-weight:600;font-size:0.9rem;margin-bottom:0.25rem}
+.verdict-body{color:var(--muted2);font-size:0.875rem;line-height:1.6}
 
-    /* ── Links ── */
-    a.guide-link {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      color: var(--sky);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-family: 'JetBrains Mono', monospace;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.15s;
-    }
-    a.guide-link:hover { border-color: var(--sky); }
+.verdict.red{border-left-color:var(--red)}
+.verdict.green{border-left-color:var(--green)}
+.verdict.blue{border-left-color:var(--blue)}
 
-    /* ── XP platform tabs ── */
-    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-    .tab {
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .tab.active {
-      background: var(--surface2);
-      border-color: var(--emerald-dim);
-      color: var(--emerald);
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+/* ─── Cost/benefit visual ────────────────────────────────── */
+.ratio-visual{
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;
+}
+.ratio-title{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:1rem}
+.ratio-bars{display:flex;flex-direction:column;gap:0.75rem}
+.ratio-bar-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:0.75rem}
+.ratio-lbl{font-size:0.8rem;color:var(--muted2)}
+.ratio-track{height:8px;background:var(--rim);border-radius:4px;overflow:hidden}
+.ratio-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.16,1,.3,1)}
+.ratio-fill.pig{background:linear-gradient(90deg,#f5c842,#fbbf24);width:17%}
+.ratio-fill.creeper{background:linear-gradient(90deg,#f87171,#ef4444);width:100%}
+.ratio-fill.pig-inc{background:linear-gradient(90deg,#4ade80,#22c55e);width:59%}
+.ratio-fill.creeper-inc{background:linear-gradient(90deg,#60a5fa,#3b82f6);width:100%}
+.ratio-num{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted2);text-align:right}
 
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: 2rem;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
+/* ─── Bad farms grid ─────────────────────────────────────── */
+.bad-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:0.6rem;
+  margin-bottom:1.5rem;
+}
+.bad-item{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:8px;
+  padding:0.65rem 1rem;
+  display:flex;align-items:center;gap:0.6rem;
+  font-size:0.85rem;color:var(--muted2);
+  transition:border-color 0.15s;
+}
+.bad-item:hover{border-color:rgba(248,113,113,0.3);color:var(--red)}
+.bad-x{color:var(--red);font-size:0.7rem;font-weight:700;
+  width:16px;height:16px;border-radius:50%;
+  border:1px solid rgba(248,113,113,0.4);
+  display:grid;place-items:center;flex-shrink:0}
 
-    @media (max-width: 600px) {
-      .compare { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-    }
-  </style>
+/* ─── Links row ──────────────────────────────────────────── */
+.links-row{display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem}
+.link-btn{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:8px;
+  padding:0.55rem 1rem;
+  color:var(--blue);
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:500;
+  transition:all 0.15s;
+}
+.link-btn:hover{border-color:var(--blue);background:rgba(96,165,250,0.08)}
+.link-btn .lbico{font-size:0.9rem}
+
+/* ─── XP section ─────────────────────────────────────────── */
+.xp-flow{
+  display:flex;align-items:center;gap:0;
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:var(--r);
+  overflow:hidden;
+  margin-bottom:1.5rem;
+}
+.xp-node{
+  flex:1;padding:1.25rem;text-align:center;
+  border-right:1px solid var(--rim);
+}
+.xp-node:last-child{border-right:none}
+.xp-arrow{
+  padding:0 0.5rem;color:var(--muted);font-size:0.8rem;
+}
+.xp-icon{font-size:1.5rem;margin-bottom:0.35rem}
+.xp-label{font-weight:600;font-size:0.9rem;margin-bottom:0.2rem}
+.xp-hint{font-size:0.75rem;color:var(--muted)}
+
+/* ─── Platform tabs ──────────────────────────────────────── */
+.tab-bar{
+  display:flex;gap:0;
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:8px;
+  overflow:hidden;
+  width:fit-content;
+  margin-bottom:1.5rem;
+}
+.ptab{
+  padding:0.55rem 1.5rem;
+  font-size:0.875rem;font-weight:600;
+  cursor:pointer;color:var(--muted2);
+  border:none;background:transparent;
+  transition:all 0.15s;
+}
+.ptab.on{background:var(--panel2);color:var(--text)}
+
+.tcontent{display:none}
+.tcontent.on{display:block}
+
+/* ─── Step cards ─────────────────────────────────────────── */
+.step-grid{display:flex;flex-direction:column;gap:0.6rem}
+.step-card{
+  display:grid;grid-template-columns:44px 1fr;gap:1rem;
+  background:var(--panel);border:1px solid var(--rim);
+  border-radius:var(--r);padding:1rem 1.25rem;
+  align-items:start;
+  transition:border-color 0.2s;
+}
+.step-card:hover{border-color:var(--rim2)}
+.step-num2{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--panel2);border:1px solid var(--rim2);
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:0.85rem;color:var(--gold);
+  margin-top:2px;
+}
+.step-body2 h4{font-size:0.95rem;font-weight:600;margin-bottom:0.2rem}
+.step-body2 p{font-size:0.85rem;color:var(--muted2);line-height:1.6}
+
+/* ─── Callout ─────────────────────────────────────────────── */
+.callout2{
+  border-radius:var(--r);
+  padding:1rem 1.25rem;
+  display:flex;gap:0.75rem;
+  font-size:0.875rem;
+  margin-bottom:1rem;
+}
+.callout2.gold{background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.2);color:#fde68a}
+.callout2.red{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);color:#fca5a5}
+.callout2.blue{background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.2);color:#93c5fd}
+.callout2-icon{flex-shrink:0;font-size:1rem;margin-top:1px}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+footer{
+  padding:2.5rem 4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1rem;color:var(--muted2);
+}
+.footer-brand span{color:var(--gold)}
+.footer-credits{font-size:0.78rem;color:var(--muted)}
+
+/* ─── Scroll reveal ──────────────────────────────────────── */
+.reveal{
+  opacity:0;transform:translateY(20px);
+  transition:opacity 0.55s ease,transform 0.55s ease;
+}
+.reveal.in{opacity:1;transform:none}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .content{margin-left:0}
+  .hero{padding:4rem 1.5rem 2.5rem}
+  .page-section{padding:2.5rem 1.5rem}
+  .farm-grid{grid-template-columns:1fr}
+  footer{padding:2rem 1.5rem}
+  .mob-toggle{display:block}
+  .xp-flow{flex-direction:column}
+  .xp-node{border-right:none;border-bottom:1px solid var(--rim)}
+  .xp-node:last-child{border-bottom:none}
+  .hero-stats{gap:1.5rem}
+  .ratio-bar-row{grid-template-columns:70px 1fr 55px}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  #starfield{display:none}
+}
+</style>
 </head>
 <body>
 
-<nav>
-  <span class="nav-logo">skyblock.guide</span>
-  <div class="nav-links">
-    <a href="#money">Money</a>
-    <a href="#xp">XP</a>
-    <a href="#links">Links</a>
+<canvas id="starfield"></canvas>
+
+<!-- Mobile toggle -->
+<button class="mob-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+
+<!-- ─── Sidebar ──────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">✦ CubeCraft</div>
+    <div class="logo-title">Skyblock<br/><span>Guide</span></div>
   </div>
-</nav>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="hero-tag">// CubeCraft Skyblock</div>
-  <h1>The Complete<br /><span>Money & XP</span> Guide</h1>
-  <p>The fastest progression paths, best farms, and what to avoid — all in one place.</p>
-</div>
+  <div class="nav-section-label">Money</div>
+  <a class="nav-item active" href="#started" onclick="setActive(this)">
+    <span class="nav-icon">🚀</span>Getting Started
+  </a>
+  <a class="nav-item" href="#farms" onclick="setActive(this)">
+    <span class="nav-icon">🐷</span>Best Farms
+  </a>
+  <a class="nav-item" href="#comparison" onclick="setActive(this)">
+    <span class="nav-icon">⚖️</span>Pig vs Creeper
+  </a>
+  <a class="nav-item" href="#avoid" onclick="setActive(this)">
+    <span class="nav-icon">⛔</span>What to Avoid
+  </a>
 
-<main>
+  <div class="nav-section-label">XP</div>
+  <a class="nav-item" href="#xp" onclick="setActive(this)">
+    <span class="nav-icon">⚡</span>XP Path
+  </a>
+  <a class="nav-item" href="#platform" onclick="setActive(this)">
+    <span class="nav-icon">🎮</span>Bedrock & Java
+  </a>
 
-  <!-- ═══════════════ MONEY ═══════════════ -->
-  <div id="money">
-    <div class="section-header">
-      <div class="section-icon icon-gold">💰</div>
-      <h2>How to Make Money</h2>
+  <div class="nav-section-label">Resources</div>
+  <a class="nav-item" href="#links" onclick="setActive(this)">
+    <span class="nav-icon">🔗</span>Links & Videos
+  </a>
+
+  <div class="sidebar-footer">
+    Farms by <strong>@scσrcнνeιℓ</strong><br/>
+    Litematica by <strong>@TheDeadRWalking</strong>
+  </div>
+</aside>
+
+<!-- ─── Main content ──────────────────────────────────────── -->
+<div class="content">
+
+  <!-- Hero -->
+  <header class="hero" id="top">
+    <div class="hero-glow"></div>
+    <div class="hero-eyebrow reveal">
+      <span class="pill pill-gold">Money Guide</span>
+      <span class="pill pill-green">XP Guide</span>
     </div>
+    <h1 class="reveal">The Complete<br/><span class="line2">Skyblock Handbook</span></h1>
+    <p class="hero-sub reveal">Everything you need to go from Cocoa Beans to Creeper farms — the fastest route, the best builds, and what not to waste time on.</p>
+    <div class="hero-stats reveal">
+      <div class="hero-stat">
+        <span class="val" data-count="270">0</span>
+        <span class="lbl">M / hour (creeper)</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val" data-count="160">0</span>
+        <span class="lbl">M / hour (pig)</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val" data-prefix="$" data-count="2.25">0</span>
+        <span class="lbl">Billion — pig cost</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val" data-count="864">0</span>
+        <span class="lbl">Spawners target</span>
+      </div>
+    </div>
+  </header>
 
-    <!-- Progression -->
-    <div class="card">
-      <h3>Fastest Progression Path</h3>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <strong>Cocoa Beans</strong>
-            <span>Only needed to complete the "Blot out the Sun" quest. Don't spend time here.</span>
-          </div>
+  <!-- ═══ GETTING STARTED ═══ -->
+  <section class="page-section" id="started">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">01</span>
+      <span class="section-tag">/ Money</span>
+    </div>
+    <h2 class="section-title reveal">Getting Started</h2>
+    <p class="section-desc reveal">Follow this path in order. Skipping steps will cost you more in the long run.</p>
+
+    <div class="path-track">
+      <div class="path-step reveal">
+        <div class="path-dot">🫘</div>
+        <div class="path-body">
+          <div class="path-title">Cocoa Beans</div>
+          <div class="path-desc">Only farm these to complete the <em>"Blot out the Sun"</em> quest. Don't invest further — this is purely a quest gate.</div>
+          <span class="path-badge badge-tip">Quest only</span>
         </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <strong>Melon Farm</strong>
-            <span>Build a large melon farm on Birch Island. Use Fortune + Silk Touch on an axe, or Efficiency + Silk Touch for a bigger farm. Aim to gather a few million before Savannah.</span>
-          </div>
+      </div>
+      <div class="path-step reveal">
+        <div class="path-dot">🍈</div>
+        <div class="path-body">
+          <div class="path-title">Melon Farm — Birch Island</div>
+          <div class="path-desc">Build a large melon farm on Birch Island. Use <strong>Fortune + Silk Touch</strong> on an axe for max drops, or go bigger and use <strong>Efficiency + Silk Touch</strong> to mine faster. Target a few million before hitting Savannah.</div>
+          <span class="path-badge badge-ok">Good starter income</span>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <strong>Pig Spawners × 864</strong>
-            <span>When you hit Savannah, buy pig spawners and build the full fencegate pig farm. <strong>Complete all 864 spawners before moving on.</strong></span>
-          </div>
+      </div>
+      <div class="path-step reveal">
+        <div class="path-dot">🔥</div>
+        <div class="path-body">
+          <div class="path-title">Unlock the Nether (parallel)</div>
+          <div class="path-desc">While farming melons, actively work on unlocking the Nether — talk to the Gatekeeper to progress. This opens XP farms and better spawners.</div>
+          <span class="path-badge badge-tip">Do this in parallel</span>
         </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <strong>Creeper Farm (optional)</strong>
-            <span>Only worth it if you plan to grind 200+ hours manually. See the breakdown below before deciding.</span>
-          </div>
+      </div>
+      <div class="path-step reveal">
+        <div class="path-dot">🐷</div>
+        <div class="path-body">
+          <div class="path-title">Pig Spawners × 864 — Full Build</div>
+          <div class="path-desc">At Savannah, buy pig spawners and build the full fencegate pig farm. Remove lava. Replace the chessboard fence/glass-pane pattern with <strong>cobblestone walls + lanterns</strong>.</div>
+          <span class="path-badge badge-warn">Complete ALL 864 before moving on</span>
+        </div>
+      </div>
+      <div class="path-step reveal">
+        <div class="path-dot">💥</div>
+        <div class="path-body">
+          <div class="path-title">Creeper Farm (optional)</div>
+          <div class="path-desc">Only worth upgrading if you plan to sell for <strong>200+ hours manually</strong>. Pigs give better value per coin spent. Finish pigs completely, then decide.</div>
+          <span class="path-badge badge-warn">Only if 200h+ grinder</span>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="callout callout-tip">
-      <span class="callout-icon">⚠️</span>
-      <span>Also focus on unlocking the Nether in parallel — talk to the Gatekeeper to progress. Remove lava from farms and swap the chessboard fence/glass-pane pattern with cobblestone walls + lanterns.</span>
+  <!-- ═══ BEST FARMS ═══ -->
+  <section class="page-section" id="farms">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">02</span>
+      <span class="section-tag">/ Money</span>
     </div>
+    <h2 class="section-title reveal">Best Money Farms</h2>
+    <p class="section-desc reveal">Two farms dominate. Both use the same building — the creeper variant requires key differences shown in the video.</p>
 
-    <!-- Farm comparison -->
-    <div class="section-header" style="margin-top:2.5rem">
-      <div class="section-icon icon-gold">🐷</div>
-      <h2>Best Money Farms</h2>
-    </div>
-
-    <div class="compare">
-      <div class="farm-card recommended">
-        <div class="farm-name">🐷 Fencegate Pig Farm</div>
-        <div class="farm-stat">
-          <label>Income</label>
-          <value>160M / hour</value>
+    <div class="farm-grid reveal">
+      <div class="farm-card star">
+        <div class="farm-header">
+          <div class="farm-name">🐷 Fencegate Pig Farm</div>
+          <span class="best-tag">Best Value</span>
         </div>
-        <div class="farm-stat">
-          <label>Total Cost</label>
-          <value class="cost">2.25B</value>
+        <div class="farm-body">
+          <div class="farm-row">
+            <span class="farm-row-label">Income</span>
+            <span class="farm-row-val val-green">160M / hour</span>
+          </div>
+          <div class="farm-row">
+            <span class="farm-row-label">Total Cost</span>
+            <span class="farm-row-val val-red">2.25B</span>
+          </div>
+          <div class="farm-row">
+            <span class="farm-row-label">Spawners</span>
+            <span class="farm-row-val val-gold">864</span>
+          </div>
+          <div class="farm-row">
+            <span class="farm-row-label">Designer</span>
+            <span class="farm-row-val" style="font-size:0.78rem;color:var(--muted2)">@scσrcнνeιℓ / ItzXelia</span>
+          </div>
         </div>
-        <div class="farm-stat">
-          <label>Spawners Needed</label>
-          <value>864</value>
-        </div>
-        <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--muted)">Best value. Finish this fully before considering creepers.</div>
       </div>
       <div class="farm-card">
-        <div class="farm-name">💥 Fencegate Creeper Farm</div>
-        <div class="farm-stat">
-          <label>Income</label>
-          <value>270M / hour</value>
+        <div class="farm-header">
+          <div class="farm-name">💥 Fencegate Creeper Farm</div>
         </div>
-        <div class="farm-stat">
-          <label>Total Cost</label>
-          <value class="cost">34.56B</value>
-        </div>
-        <div class="farm-stat">
-          <label>vs Pig Farm</label>
-          <value>15× cost, 1.6× income</value>
-        </div>
-        <div style="margin-top:0.75rem; font-size:0.8rem; color:var(--muted)">Uses the same building as pig farm. Worth it only for 200h+ grinders.</div>
-      </div>
-    </div>
-
-    <div class="callout callout-warn">
-      <span class="callout-icon">🚫</span>
-      <span>Pigs give 2.4B over 160M/h pace. Creepers give 34.6B at 270M/h pace but cost 15× more. Don't skip pigs to rush creepers — finish pigs first, then decide if you need the upgrade.</span>
-    </div>
-
-    <!-- Credits -->
-    <div style="margin-bottom:1rem; font-size:0.85rem; color:var(--muted)">
-      Farm designs by <strong style="color:var(--text)">@scσrcнνeιℓ // ItzXelia</strong> &nbsp;·&nbsp; Litematica base by <strong style="color:var(--text)">@TheDeadRWalking</strong>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:2rem;">
-      <a class="guide-link" href="https://youtu.be/dpAT3JOZfyw?si=RexLGFRJ543W0vM9" target="_blank">▶ Creeper/Pig Farm Video</a>
-      <a class="guide-link" href="https://youtu.be/YffTvTLNcPA" target="_blank">▶ Cocoa Bean Farm Video</a>
-      <a class="guide-link" href="https://cubecraftskyblock.notion.site/2a8bda38b37980269791c5a0b4a8ce32?v=2a8bda38b37980369d09000c79c160dd" target="_blank">📋 Sellable Items List</a>
-    </div>
-
-    <!-- Bad farms -->
-    <div class="section-header" style="margin-top:2rem">
-      <div class="section-icon icon-gold">⛔</div>
-      <h2>Bad Ways to Farm Money</h2>
-    </div>
-    <div class="bad-list">
-      <div class="bad-item">Chicken Farm</div>
-      <div class="bad-item">Wood</div>
-      <div class="bad-item">Cactus Farm</div>
-      <div class="bad-item">Crops before Desert</div>
-      <div class="bad-item">FractalCake's Pig Farm</div>
-      <div class="bad-item">Sugar</div>
-    </div>
-    <div class="callout callout-info" style="margin-top:0.5rem">
-      <span class="callout-icon">ℹ️</span>
-      <span>FractalCake's pig farm is outdated, expensive, and slow — skip it even if you see it recommended elsewhere.</span>
-    </div>
-  </div>
-
-
-  <!-- ═══════════════ XP ═══════════════ -->
-  <div id="xp">
-    <div class="section-header" style="margin-top:3rem">
-      <div class="section-icon icon-green">⚡</div>
-      <h2>How to Farm XP</h2>
-    </div>
-
-    <div class="card" style="margin-bottom:1rem">
-      <h3>Progression Order</h3>
-      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:0.9rem;">
-        <span style="color:var(--sky)">Ores</span>
-        <span style="color:var(--muted)">→</span>
-        <span style="color:var(--emerald)">Piglins</span>
-        <span style="color:var(--muted)">→</span>
-        <span style="color:var(--gold)">Wither Skeletons</span>
-      </div>
-      <p style="margin-top:0.75rem">Unlock the first Nether Island as your top priority if you haven't yet. You can reach level 5 stone tools from ores alone — no mob farm needed at first.</p>
-    </div>
-
-    <!-- Platform tabs -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('bedrock', this)">Bedrock</button>
-      <button class="tab" onclick="switchTab('java', this)">Java</button>
-    </div>
-
-    <div id="tab-bedrock" class="tab-content active">
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <strong>Grab Piglin Spawners</strong>
-            <span>Pick up the piglin spawners from the first Nether Island. These are your XP foundation.</span>
+        <div class="farm-body">
+          <div class="farm-row">
+            <span class="farm-row-label">Income</span>
+            <span class="farm-row-val val-blue">270M / hour</span>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <strong>Build a Small Dropper</strong>
-            <span>Set up a small dropper in the Nether to farm starter XP and complete quests simultaneously. With fencegates, mobs can spawn directly into the drop chamber for speed.</span>
+          <div class="farm-row">
+            <span class="farm-row-label">Total Cost</span>
+            <span class="farm-row-val val-red">34.56B</span>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <strong>Build a 127-Block High Dropper</strong>
-            <span>Once further along, build a full-height dropper. Mobs must spawn exactly 127 blocks above the player (drop lands at ~125–126 blocks).</span>
+          <div class="farm-row">
+            <span class="farm-row-label">Same Building</span>
+            <span class="farm-row-val val-gold">Yes — see video</span>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <strong>Upgrade Piglins to Level 95</strong>
-            <span>At level 95, piglins survive the fall and are one-hit kills — clean, easy XP. Get a sword with the highest Smite level you can for this phase.</span>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">5</div>
-          <div class="step-body">
-            <strong>Add Wither Skeletons</strong>
-            <span>After unlocking the third Nether Island, grab wither skeleton spawners and combine them with your piglins. Upgrade them to match piglin level.</span>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">6</div>
-          <div class="step-body">
-            <strong>Late Game: Switch to Wither Skeletons</strong>
-            <span>When you have a lot of money, buy more wither skeleton spawners and retire the piglins entirely.</span>
+          <div class="farm-row">
+            <span class="farm-row-label">Designer</span>
+            <span class="farm-row-val" style="font-size:0.78rem;color:var(--muted2)">@scσrcнνeιℓ / ItzXelia</span>
           </div>
         </div>
       </div>
-      <a class="guide-link" href="https://youtu.be/Y0_BJBU43BY" target="_blank" style="margin-bottom:1.5rem;display:inline-flex">▶ 127-Block Dropper Tutorial</a>
     </div>
 
-    <div id="tab-java" class="tab-content">
-      <div class="callout callout-info">
-        <span class="callout-icon">☕</span>
-        <span>Java follows the same progression as Bedrock (Ores → Piglins → Wither Skeletons), but the endgame farm is different and faster. See the video below by @scσrcнνeιℓ // ItzXelia.</span>
+    <div class="links-row reveal">
+      <a class="link-btn" href="https://youtu.be/dpAT3JOZfyw?si=RexLGFRJ543W0vM9" target="_blank">
+        <span class="lbico">▶</span> Creeper / Pig Farm Video
+      </a>
+      <a class="link-btn" href="https://youtu.be/YffTvTLNcPA" target="_blank">
+        <span class="lbico">▶</span> Cocoa Bean Farm Video
+      </a>
+      <a class="link-btn" href="https://cubecraftskyblock.notion.site/2a8bda38b37980269791c5a0b4a8ce32?v=2a8bda38b37980369d09000c79c160dd" target="_blank">
+        <span class="lbico">📋</span> Sellable Items List
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ PIG VS CREEPER ═══ -->
+  <section class="page-section" id="comparison">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">03</span>
+      <span class="section-tag">/ Money</span>
+    </div>
+    <h2 class="section-title reveal">Pig vs Creeper — The Math</h2>
+    <p class="section-desc reveal">Creepers sound better. The numbers tell a different story.</p>
+
+    <div class="ratio-visual reveal">
+      <div class="ratio-title">Cost comparison</div>
+      <div class="ratio-bars">
+        <div class="ratio-bar-row">
+          <span class="ratio-lbl">🐷 Pigs</span>
+          <div class="ratio-track"><div class="ratio-fill pig"></div></div>
+          <span class="ratio-num">2.25B</span>
+        </div>
+        <div class="ratio-bar-row">
+          <span class="ratio-lbl">💥 Creepers</span>
+          <div class="ratio-track"><div class="ratio-fill creeper"></div></div>
+          <span class="ratio-num">34.56B</span>
+        </div>
       </div>
-      <a class="guide-link" href="https://www.youtube.com/watch?v=yCjqzMo5hRM" target="_blank" style="margin-top:0.5rem;display:inline-flex">▶ Java Endgame XP Farm</a>
+      <div class="ratio-title" style="margin-top:1.25rem">Income comparison</div>
+      <div class="ratio-bars">
+        <div class="ratio-bar-row">
+          <span class="ratio-lbl">🐷 Pigs</span>
+          <div class="ratio-track"><div class="ratio-fill pig-inc"></div></div>
+          <span class="ratio-num">160M/h</span>
+        </div>
+        <div class="ratio-bar-row">
+          <span class="ratio-lbl">💥 Creepers</span>
+          <div class="ratio-track"><div class="ratio-fill creeper-inc"></div></div>
+          <span class="ratio-num">270M/h</span>
+        </div>
+      </div>
     </div>
 
-  </div>
+    <div class="verdict reveal">
+      <div class="verdict-icon">⚖️</div>
+      <div>
+        <div class="verdict-head">Creepers cost 15× more but only earn 1.6× more</div>
+        <div class="verdict-body">Pigs produce 2.4B over their run at 160M/h pace. Creepers produce 34.6B at 270M/h — but only if you grind for 200+ hours. If you're not doing that, pigs win every time. Finish all 864 pig spawners first, then reassess whether you actually need the upgrade.</div>
+      </div>
+    </div>
+  </section>
 
-</main>
+  <!-- ═══ AVOID ═══ -->
+  <section class="page-section" id="avoid">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">04</span>
+      <span class="section-tag">/ Money</span>
+    </div>
+    <h2 class="section-title reveal">What to Avoid</h2>
+    <p class="section-desc reveal">These are either outdated, too slow, or simply not worth your time at any stage.</p>
 
-<footer>
-  <div id="links"></div>
-  Community guide compiled for CubeCraft Skyblock &nbsp;·&nbsp; Farms by @scσrcнνeιℓ // ItzXelia
-</footer>
+    <div class="bad-grid reveal">
+      <div class="bad-item"><div class="bad-x">✕</div>Chicken Farm</div>
+      <div class="bad-item"><div class="bad-x">✕</div>Wood</div>
+      <div class="bad-item"><div class="bad-x">✕</div>Cactus Farm</div>
+      <div class="bad-item"><div class="bad-x">✕</div>Crops before Desert</div>
+      <div class="bad-item"><div class="bad-x">✕</div>FractalCake's Pig Farm</div>
+      <div class="bad-item"><div class="bad-x">✕</div>Sugar</div>
+      <div class="bad-item"><div class="bad-x">✕</div>Any items before Desert</div>
+    </div>
+
+    <div class="callout2 red reveal">
+      <span class="callout2-icon">🚫</span>
+      <span>FractalCake's pig farm is outdated, expensive, and slow. Even if you see it recommended elsewhere, skip it entirely.</span>
+    </div>
+  </section>
+
+  <!-- ═══ XP PATH ═══ -->
+  <section class="page-section" id="xp">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">05</span>
+      <span class="section-tag">/ XP</span>
+    </div>
+    <h2 class="section-title reveal">XP Progression Path</h2>
+    <p class="section-desc reveal">Unlock the first Nether Island as your #1 priority if you haven't yet. You can hit Level 5 stone tools from ores alone — no mob farm needed at the start.</p>
+
+    <div class="xp-flow reveal">
+      <div class="xp-node">
+        <div class="xp-icon">⛏️</div>
+        <div class="xp-label">Ores</div>
+        <div class="xp-hint">No mob farm needed</div>
+      </div>
+      <div class="xp-node">
+        <div class="xp-icon">👹</div>
+        <div class="xp-label">Piglins</div>
+        <div class="xp-hint">First Nether Island</div>
+      </div>
+      <div class="xp-node">
+        <div class="xp-icon">💀</div>
+        <div class="xp-label">Wither Skeletons</div>
+        <div class="xp-hint">Third Nether Island</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PLATFORM ═══ -->
+  <section class="page-section" id="platform">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">06</span>
+      <span class="section-tag">/ XP</span>
+    </div>
+    <h2 class="section-title reveal">Bedrock & Java</h2>
+    <p class="section-desc reveal">Same progression order on both platforms — different endgame farms.</p>
+
+    <div class="tab-bar reveal">
+      <button class="ptab on" onclick="switchPlatform('bedrock',this)">🎮 Bedrock</button>
+      <button class="ptab" onclick="switchPlatform('java',this)">☕ Java</button>
+    </div>
+
+    <div class="tcontent on" id="tc-bedrock">
+      <div class="step-grid">
+        <div class="step-card reveal">
+          <div class="step-num2">1</div>
+          <div class="step-body2">
+            <h4>Grab Piglin Spawners</h4>
+            <p>Collect piglin spawners from the first Nether Island — these are your XP foundation for the entire early game.</p>
+          </div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num2">2</div>
+          <div class="step-body2">
+            <h4>Build a Small Dropper</h4>
+            <p>Set up a small dropper in the Nether for starter XP and quests at the same time. Use fencegates so mobs spawn directly into the drop chamber for speed.</p>
+          </div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num2">3</div>
+          <div class="step-body2">
+            <h4>127-Block High Dropper</h4>
+            <p>Build a full-height dropper once you're further along. Mobs must spawn <strong>exactly 127 blocks above the player</strong> — not higher. Drop lands at ~125–126 blocks.</p>
+          </div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num2">4</div>
+          <div class="step-body2">
+            <h4>Upgrade Piglins to Level 95</h4>
+            <p>At level 95, piglins survive the fall and are one-hit kills. Get a sword with the highest Smite you can — you'll need it for XP and eventually the Wither.</p>
+          </div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num2">5</div>
+          <div class="step-body2">
+            <h4>Add Wither Skeleton Spawners</h4>
+            <p>After unlocking the third Nether Island, grab wither skeleton spawners and combine with your piglins. Upgrade them to the same level.</p>
+          </div>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num2">6</div>
+          <div class="step-body2">
+            <h4>Late Game: Full Wither Skeletons</h4>
+            <p>When you have a lot of money, buy more wither skeleton spawners and retire your piglins entirely — skeletons are the better endgame XP source.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1.25rem">
+        <a class="link-btn" href="https://youtu.be/Y0_BJBU43BY" target="_blank">
+          <span class="lbico">▶</span> 127-Block Dropper Tutorial
+        </a>
+      </div>
+    </div>
+
+    <div class="tcontent" id="tc-java">
+      <div class="callout2 blue reveal">
+        <span class="callout2-icon">☕</span>
+        <span>Java follows the same order as Bedrock — Ores → Piglins → Wither Skeletons — but the endgame XP farm is different and faster. See the video below by @scσrcнνeιℓ // ItzXelia.</span>
+      </div>
+      <div class="callout2 gold reveal">
+        <span class="callout2-icon">⚡</span>
+        <span>The Java endgame farm outperforms the Bedrock equivalent significantly. Follow the Bedrock steps until you have enough resources, then switch to this build.</span>
+      </div>
+      <div style="margin-top:0.5rem">
+        <a class="link-btn" href="https://www.youtube.com/watch?v=yCjqzMo5hRM" target="_blank">
+          <span class="lbico">▶</span> Java Endgame XP Farm — @scσrcнνeιℓ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LINKS ═══ -->
+  <section class="page-section" id="links">
+    <div class="section-eyebrow reveal">
+      <span class="section-num">07</span>
+      <span class="section-tag">/ Resources</span>
+    </div>
+    <h2 class="section-title reveal">All Links & Videos</h2>
+    <p class="section-desc reveal">Everything in one place.</p>
+
+    <div class="links-row reveal">
+      <a class="link-btn" href="https://youtu.be/dpAT3JOZfyw?si=RexLGFRJ543W0vM9" target="_blank">
+        <span class="lbico">▶</span> Creeper/Pig Farm
+      </a>
+      <a class="link-btn" href="https://youtu.be/YffTvTLNcPA" target="_blank">
+        <span class="lbico">▶</span> Cocoa Bean Farm
+      </a>
+      <a class="link-btn" href="https://youtu.be/Y0_BJBU43BY" target="_blank">
+        <span class="lbico">▶</span> 127-Block Dropper
+      </a>
+      <a class="link-btn" href="https://www.youtube.com/watch?v=yCjqzMo5hRM" target="_blank">
+        <span class="lbico">▶</span> Java XP Farm
+      </a>
+      <a class="link-btn" href="https://cubecraftskyblock.notion.site/2a8bda38b37980269791c5a0b4a8ce32?v=2a8bda38b37980369d09000c79c160dd" target="_blank">
+        <span class="lbico">📋</span> Sellable Items List
+      </a>
+    </div>
+
+    <div class="verdict blue reveal">
+      <div class="verdict-icon">🧱</div>
+      <div>
+        <div class="verdict-head">Litematica available for Java users</div>
+        <div class="verdict-body">Bedrock players can view the schematic in-browser via a litematica viewer. Credits to @TheDeadRWalking for the litematica base and @scσrcнνeιℓ // ItzXelia for the farm design.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">Skyblock<span>Guide</span></div>
+    <div class="footer-credits">Farms by @scσrcнνeιℓ // ItzXelia · Litematica by @TheDeadRWalking · CubeCraft</div>
+  </footer>
+
+</div><!-- /content -->
 
 <script>
-  function switchTab(id, btn) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    btn.classList.add('active');
+/* ── Starfield ── */
+(function(){
+  const c=document.getElementById('starfield');
+  const ctx=c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+  function init(){
+    resize();stars=[];
+    for(let i=0;i<120;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.2,a:Math.random()});
   }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=0.003;
+      const alpha=0.3+0.4*Math.sin(s.a);
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,210,255,${alpha})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',init);
+  init();draw();
+})();
+
+/* ── Animated counters ── */
+function animateCounter(el){
+  const target=parseFloat(el.dataset.count);
+  const prefix=el.dataset.prefix||'';
+  const isDecimal=target%1!==0;
+  const duration=1800;
+  const start=performance.now();
+  function step(now){
+    const p=Math.min((now-start)/duration,1);
+    const eased=1-Math.pow(1-p,4);
+    const val=eased*target;
+    el.textContent=prefix+(isDecimal?val.toFixed(2):Math.floor(val));
+    if(p<1)requestAnimationFrame(step);
+    else el.textContent=prefix+(isDecimal?target.toFixed(2):target);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── Scroll reveal + counter trigger ── */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      if(e.target.classList.contains('hero-stats')){
+        e.target.querySelectorAll('[data-count]').forEach(animateCounter);
+      }
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ── Sidebar nav active ── */
+function setActive(el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+
+/* ── Platform tabs ── */
+function switchPlatform(id,btn){
+  document.querySelectorAll('.tcontent').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tc-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+/* ── Sidebar active on scroll ── */
+const sections=document.querySelectorAll('[id]');
+const navLinks=document.querySelectorAll('.nav-item');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{
+    if(window.scrollY>=s.offsetTop-120)current=s.id;
+  });
+  navLinks.forEach(l=>{
+    l.classList.remove('active');
+    if(l.getAttribute('href')==='#'+current)l.classList.add('active');
+  });
+},{passive:true});
 </script>
 </body>
 </html>
