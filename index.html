@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CubeCraft Skyblock Guide</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-block"></span>
+        <span class="logo-text">CC Skyblock</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="pages/money.html">Money</a></li>
+        <li><a href="pages/xp.html">XP</a></li>
+        <li><a href="pages/enchants.html">Enchants</a></li>
+        <li><a href="pages/quests.html">Quests</a></li>
+        <li><a href="pages/mechanics.html">Mechanics</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">&#9776;</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="pages/money.html">Money</a>
+      <a href="pages/xp.html">XP</a>
+      <a href="pages/enchants.html">Enchants</a>
+      <a href="pages/quests.html">Quests</a>
+      <a href="pages/mechanics.html">Mechanics</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="rune-grid" aria-hidden="true" id="runeGrid"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Community Knowledge Base</p>
+      <h1 class="hero-title">CubeCraft<br><span class="accent">Skyblock</span> Guide</h1>
+      <p class="hero-sub">Everything you need to grow your island — from your first cocoa bean to billions per hour.</p>
+      <div class="hero-cta">
+        <a href="pages/money.html" class="btn btn-primary">Start Making Money</a>
+        <a href="pages/xp.html" class="btn btn-ghost">Level Up Fast</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <span class="stat-num">10<span class="stat-unit">B+</span></span>
+        <span class="stat-label">coins/hr (Blazebomber)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">4.86<span class="stat-unit">M</span></span>
+        <span class="stat-label">XP/hr (Java farm)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">270<span class="stat-unit">M</span></span>
+        <span class="stat-label">coins/hr (Creeper farm)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUICK NAV CARDS -->
+  <section class="section cards-section">
+    <div class="container">
+      <h2 class="section-title">Browse the Guide</h2>
+      <div class="card-grid">
+
+        <a href="pages/money.html" class="guide-card">
+          <div class="card-icon money-icon">💰</div>
+          <h3>Money Farming</h3>
+          <p>Best farms ranked, progression path from cocoa beans to creepers, and what to avoid.</p>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <a href="pages/xp.html" class="guide-card">
+          <div class="card-icon xp-icon">⚗️</div>
+          <h3>XP Farming</h3>
+          <p>Dropper builds, piglin & wither skeleton setups, and progression for Bedrock and Java.</p>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <a href="pages/enchants.html" class="guide-card">
+          <div class="card-icon ench-icon">✨</div>
+          <h3>Best Enchants</h3>
+          <p>Optimal enchantments for every tool, weapon, and armor piece — early and late game.</p>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <a href="pages/quests.html" class="guide-card">
+          <div class="card-icon quest-icon">📜</div>
+          <h3>Quest Help</h3>
+          <p>Common issues and fixes for tricky overworld and nether quests.</p>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <a href="pages/mechanics.html" class="guide-card">
+          <div class="card-icon mech-icon">⚙️</div>
+          <h3>Game Mechanics</h3>
+          <p>How spawners, fortune, looting, and armor protection actually work on CubeCraft.</p>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <a href="https://cubecraftskyblock.notion.site/2a8bda38b37980269791c5a0b4a8ce32?v=2a8bda38b37980369d09000c79c160dd" target="_blank" rel="noopener" class="guide-card external-card">
+          <div class="card-icon list-icon">📋</div>
+          <h3>Full Price List</h3>
+          <p>Complete list of all sellable items and their prices on CubeCraft Skyblock.</p>
+          <span class="card-arrow ext">↗</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK TIPS -->
+  <section class="section tips-section">
+    <div class="container">
+      <h2 class="section-title">Quick Tips</h2>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <span class="tip-tag">Spawners</span>
+          <p>Fencegates maximize spawn output — mobs land directly in the kill chamber.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-tag">Fortune</span>
+          <p>Fortune 10 = guaranteed +1 drop. Fortune 15 = +1 guaranteed, 50% chance at +2.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-tag">Looting</span>
+          <p>Looting 4 = guaranteed +1 mob drop. Great for gold quests with piglins.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-tag">Protection</span>
+          <p>Protection caps at 80% total. Spreading 20 levels across any pieces achieves max — distribution doesn't matter.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-tag">Droppers</span>
+          <p>127 blocks high = mobs survive fall at level 95, can be one-hit. Perfect XP efficiency.</p>
+        </div>
+        <div class="tip-item">
+          <span class="tip-tag">Java +2</span>
+          <p>Java players get +2 Efficiency on all tool recommendations vs Bedrock.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-logo"><span class="logo-block small"></span> CC Skyblock Guide</p>
+      <p class="footer-credit">Guide content by the CubeCraft community. Farms by <strong>@fakechips</strong>, <strong>@scσrcнνeιℓ // ItzXelia</strong> &amp; others.</p>
+      <p class="footer-note">Not affiliated with CubeCraft Games.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
